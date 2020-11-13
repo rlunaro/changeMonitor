@@ -1,0 +1,34 @@
+#
+# config.yaml
+#
+#
+
+paths_to_monitor : 
+    -
+        path : /home/rluna/wkpy/changeMonitor/test_resources
+        file_patterns : 
+            - "(?i).*\\.php$"
+
+database: "/home/rluna/wkpy/changeMonitor/changeMonitor.db"
+
+email_from : "rlunaro@gmail.com"
+email_to   : "superman_ha_muerto@yahoo.com"
+subject_reload : "A reload of the md5sums have been made"
+subject_ok     : "OK: nothing has changed"
+subject_fail   : "FAIL: #numberFiles FILES HAVE BEEN ALTERED"
+body_reload: >
+    Hi, 
+    
+    A complete reload of the paths have been made. If it is not you, 
+    somebody is doing something really nefarious on your server. The 
+    new files signatures are below. 
+    
+    #file_list
+body_ok    : >
+    Este es el body de OK. 
+body_fail  : >
+    Hi, 
+    
+    It appears that some files have been altered. 
+    
+    #file_list
