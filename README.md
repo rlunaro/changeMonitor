@@ -1,3 +1,5 @@
+<img align="left" src="resources/icon-64.png">
+
 # changeMonitor
 
 A tool to monitor for changes of files in a given directory, 
