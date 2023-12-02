@@ -251,6 +251,13 @@ if __name__ == '__main__' :
 
     logging.warning(f"changeMonitor started at {datetime.datetime.now()}")
 
+    send_email( config['email']['from'], 
+                config['email']['to'], 
+                config['email']['reload']['subject'], 
+                config['email']['reload']['body'], 
+                [] )
+
+
     configure_pathspec_info( config['paths_to_monitor'] )        
             
     with sqlite3.connect(config['database'], isolation_level = None ) as conn : 
