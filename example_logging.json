@@ -1,0 +1,40 @@
+{
+    "version" : 1,
+    
+    "formatters" : {
+        "formatter1" : {
+                "format": "%(asctime)s %(levelname)-8s %(message)s",
+                "datefmt" : "%Y-%m-%d %H:%M"
+        }
+    },
+    
+    "handlers" : {
+        "handler1" : {
+            "class" : "logging.handlers.RotatingFileHandler",
+            "filename" : "PUT-HERE-THE-PATH-TO-YOUR-LOG-FILE", 
+            "encoding" : "utf-8",
+            "maxBytes" : 1024000,
+            "backupCount" : 3,
+            "formatter" : "formatter1"
+        },
+        "console_handler" : {
+            "class" : "logging.StreamHandler",
+            "formatter" : "formatter1"
+        }  
+    },
+    
+    "loggers" : {
+        "rotatingFileLogger" : {
+            "level" : "DEBUG",
+            "handlers": [ "handler1", "console_handler" ]
+        }
+    },
+    
+    "root" : {
+        "handlers" : [ "handler1", "console_handler" ],
+        "level" : "DEBUG"
+    }
+
+}
+
+

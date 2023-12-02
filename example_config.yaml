@@ -1,0 +1,62 @@
+#
+# example_config.yaml
+#
+# Configure this file to suit your needs. 
+#
+
+# STEP 1: rename this file to "config.yaml"
+
+
+paths_to_monitor : 
+    "/path/to/a/website":
+        # configure here what extensions you want to monitor
+        # (or not to). For instance, to monitor every PHP file
+        # inside /path/to/a/webiste, just add "*.php" (like 
+        # the one set below)
+        # you can also avoid certain files, like the example 
+        # of the README.php file
+        files:
+            - "*.php"
+            - "*.html"
+            - "!README.php"
+        # here you have to configure what directories you want 
+        # to ignore. The directories are checked by regular 
+        # expression, so regular expressions can be used to 
+        # match multiple directories. 
+        # For instance, "images?" would match the directories
+        # "image" or "images" 
+        directories_ignored:
+            - "/images"
+
+# changeMonitor uses a database to store the files and a 
+# md5sum of the file; here you have to set where the 
+# database is located
+database: "/path/to/your/database/example.db"
+
+email: 
+    from: "hello@example.com"
+    to: "your-email-address@example.com"
+    reload: 
+        subject: "RELOAD: A reload of the md5sums have been made"
+        body: >
+            Hi, 
+            
+            A complete reload of the paths have been made. If it is not you, 
+            somebody is doing something really nefarious on your server. The 
+            new files signatures are below. 
+            
+            #file_list
+    ok:
+        subject: "OK: nothing has changed"
+        body: >
+            Este es el body de OK. 
+    fail:
+        subject: "FAIL: #numberFiles FILES HAVE BEEN ALTERED"
+        body: >
+            Hi, 
+            
+            It appears that some files have been altered. 
+            
+            #file_list
+
+            
