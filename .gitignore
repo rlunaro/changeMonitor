@@ -5,6 +5,9 @@ changeMonitor.db
 config.yaml
 logging.json
 test_resources/
+site/
+token.pickle
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

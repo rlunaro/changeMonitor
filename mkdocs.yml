@@ -1,0 +1,10 @@
+site_name: Change Monitor
+nav:
+    - Home: index.md
+    - Install : install.md
+    - Privacy policy (english): privacy_en.md
+    - Privacy policy (spanish): privacy_es.md
+    - Terms of service (english): terms_en.md
+    - Terms of service (spanish): terms_es.md
+
+    

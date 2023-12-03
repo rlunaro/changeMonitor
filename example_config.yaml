@@ -33,30 +33,60 @@ paths_to_monitor :
 # database is located
 database: "/path/to/your/database/example.db"
 
+# here you will have to provide the oauth info 
+# information for your project. You can get your 
+# own oauth info information by creating a google 
+# project in the google cloud console and afterwards
+# create a oauth client
+installed:
+    "client_id": "XXXX"
+    "project_id": "XXXX"
+    "auth_uri": "XXXX"
+    "token_uri": "XXXXX"
+    "auth_provider_x509_cert_url": "XXXX"
+    "client_secret": "XXXXX"
+
 email: 
     from: "hello@example.com"
     to: "your-email-address@example.com"
     reload: 
         subject: "RELOAD: A reload of the md5sums have been made"
         body: >
-            Hi, 
+            <html>
             
-            A complete reload of the paths have been made. If it is not you, 
+            <p>Hi,</p> 
+            
+            <p>A complete reload of the paths have been made. If it is not you, 
             somebody is doing something really nefarious on your server. The 
-            new files signatures are below. 
+            new files signatures are below. </p>
             
             #file_list
+            </html>
     ok:
         subject: "OK: nothing has changed"
         body: >
-            Este es el body de OK. 
+            <html>
+            
+            <p>Hello,</p>
+            
+            <p>Nothing has changed in the monitored filesystems.</p>
+            
+            <p>Have a nice day.</p>
+
+            </html>
     fail:
         subject: "FAIL: #numberFiles FILES HAVE BEEN ALTERED"
         body: >
-            Hi, 
+            <html>
+            <p>Hi,</p> 
             
-            It appears that some files have been altered. 
+            <p>It appears that some files have been altered.
+            It is possible that somebody is doing something 
+            nasty, check it out.</p> 
             
             #file_list
 
+            </html>
+
+            
             

@@ -72,14 +72,15 @@ def read_config( filepath : str ) :
     return data
 
 
-def send_email( _from, 
+def send_email( config, 
+                _from, 
                 _to, 
                 subject, 
                 body, 
                 file_list: list ):
-    gmail = Gmail()
+    gmail = Gmail( config )
     gmail.loadOrValidateCredentials()
-    gmail.sendSimpleEmail(_from, 
+    gmail.sendHtmlEmail(_from, 
                           _to, 
                           replace_variables( subject, file_list ), 
                           replace_variables( body, file_list ) )
@@ -92,10 +93,24 @@ def replace_variables( inputString, file_list ):
     return outputString
 
 def file_list_as_html( file_list : list ):
-    outString = ""
-    for file in file_list : 
-        outString = outString + file + '\n'
-    return f'\n\n{outString}\n\n'
+    headString = """
+    <thead>
+        <tr><td><b>Path</b></td><td><b>Info</b></td></tr>
+    </thead>
+    """
+    bodyString = ""
+    for file in file_list :
+        file_info = file['md5_value'] 
+        if file.get('deleted'): 
+            file_info = 'deleted'
+        if file.get('is_new'):
+            file_info = 'new_file'
+        if file.get('changed'): 
+            file_info = 'changed_file'
+        bodyString += f"""<tr>
+        <td>{file['path']}</td><td>{file['md5_value']}</td></tr>
+        """
+    return f"""<table>{headString}<tbody>{bodyString}</tbody></table>"""
 
 def delete_paths_to_monitor( conn : sqlite3.Connection ):
     cur = conn.cursor()
@@ -251,7 +266,8 @@ if __name__ == '__main__' :
 
     logging.warning(f"changeMonitor started at {datetime.datetime.now()}")
 
-    send_email( config['email']['from'], 
+    send_email( {'installed': config['installed']}, 
+                config['email']['from'], 
                 config['email']['to'], 
                 config['email']['reload']['subject'], 
                 config['email']['reload']['body'], 
@@ -266,7 +282,8 @@ if __name__ == '__main__' :
             file_list = traverse_paths( conn, 
                                         config['paths_to_monitor'], 
                                         store_path_md5_sum )
-            send_email( config['email']['from'], 
+            send_email( {'installed': config['installed']}, 
+                        config['email']['from'], 
                         config['email']['to'], 
                         config['email']['reload']['subject'], 
                         config['email']['reload']['body'], 
@@ -281,7 +298,8 @@ if __name__ == '__main__' :
             altered_files = get_altered_files( file_list )
             if len(altered_files) == 0 :
                 print("everything is ok")
-                send_email( config['email']['from'], 
+                send_email( {'installed': config['installed']},
+                            config['email']['from'], 
                             config['email']['to'], 
                             config['email']['ok']['subject'], 
                             config['email']['ok']['body'], 
@@ -289,7 +307,8 @@ if __name__ == '__main__' :
             else: 
                 print('some files were altered:')
                 print(altered_files)
-                send_email( config['email']['from'], 
+                send_email( {'installed': config['installed']},
+                            config['email']['from'], 
                             config['email']['to'], 
                             config['email']['fail']['subject'], 
                             config['email']['fail']['body'], 

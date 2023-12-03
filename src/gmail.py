@@ -22,11 +22,11 @@ class Gmail(object):
     # If modifying these scopes, delete the file token.pickle.
     SCOPES = ['https://www.googleapis.com/auth/gmail.send']
     token_file = "token.pickle"
-    credentials_file = "credentials.json"
+    credentials = {}
 
 
-    def __init__(self):
-        pass
+    def __init__(self, credentials : dict ):
+        self.credentials = credentials
     
 
     def loadOrValidateCredentials( self ):
@@ -42,9 +42,9 @@ class Gmail(object):
             if self.creds and self.creds.expired and self.creds.refresh_token:
                 self.creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                                self.credentials_file, self.SCOPES )
-                self.creds = flow.run_local_server(port=0)
+                flow = InstalledAppFlow.from_client_config(
+                                self.credentials, self.SCOPES )
+                self.creds = flow.run_local_server(port=50507)
             # Save the credentials for the next run
             with open(self.token_file, 'wb') as token:
                 pickle.dump(self.creds, token)
@@ -64,6 +64,22 @@ class Gmail(object):
         
         for address in emailTo :  
             message = MIMEText(emailBody)
+            message['from'] = emailFrom
+            message['to'] = address
+            message['subject'] = emailSubject
+            encoded_message = {'raw': base64.urlsafe_b64encode(message.as_bytes()).decode('ascii')}
+            self._gmail_service.users().messages().send(userId=emailFrom, body=encoded_message).execute()    
+
+    def sendHtmlEmail(self,
+                    emailFrom, 
+                    emailTo,
+                    emailSubject, 
+                    emailBody ):
+        if isinstance( emailTo, str ) : 
+            emailTo = [emailTo]
+        
+        for address in emailTo :  
+            message = MIMEText(emailBody, "html")
             message['from'] = emailFrom
             message['to'] = address
             message['subject'] = emailSubject
