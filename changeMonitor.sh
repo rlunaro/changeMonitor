@@ -16,8 +16,8 @@ then
 fi
 
 "$PYTHON_EXE" -u "$change_monitor_home/main.py" \
---config="config.yaml" \
---logging="logging.json" \
+--config="$change_monitor_home/config.yaml" \
+--logging="$change_monitor_home/logging.json" \
 $1 $2 $3 $4 $5
 
 

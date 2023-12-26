@@ -21,7 +21,7 @@ class Gmail(object):
     '''
     # If modifying these scopes, delete the file token.pickle.
     SCOPES = ['https://www.googleapis.com/auth/gmail.send']
-    token_file = "token.pickle"
+    token_file = os.path.relpath("token.pickle")
     credentials = {}
 
 
@@ -44,7 +44,8 @@ class Gmail(object):
             else:
                 flow = InstalledAppFlow.from_client_config(
                                 self.credentials, self.SCOPES )
-                self.creds = flow.run_local_server(port=50507)
+                self.creds = flow.run_local_server(port=50507,
+                                                   open_browser=False)
             # Save the credentials for the next run
             with open(self.token_file, 'wb') as token:
                 pickle.dump(self.creds, token)

@@ -95,7 +95,7 @@ def replace_variables( inputString, file_list ):
 def file_list_as_html( file_list : list ):
     headString = """
     <thead>
-        <tr><td><b>Path</b></td><td><b>Info</b></td></tr>
+        <tr><td><b>Path</b></td><td><b>Info</b></td><td><b>md5</b></td></tr>
     </thead>
     """
     bodyString = ""
@@ -108,7 +108,9 @@ def file_list_as_html( file_list : list ):
         if file.get('changed'): 
             file_info = 'changed_file'
         bodyString += f"""<tr>
-        <td>{file['path']}</td><td>{file['md5_value']}</td></tr>
+        <td>{file['path']}</td>
+        <td>{file_info}</td>
+        <td>{file['md5_value']}</td></tr>
         """
     return f"""<table>{headString}<tbody>{bodyString}</tbody></table>"""
 

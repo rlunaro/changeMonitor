@@ -11,26 +11,30 @@ script, you have to do many tasks by yourself. In a nutshell,
 you have to do the following: 
 
   * Install Python
-  * Create a directory in the target system
-  * In that target system, create a python environment
-  * Download the source code of the application
+  * Clone the source repository
+  * TODO: Create a project in google cloud console
+  * OPTIONAL: Create a python environment in the target system
   * Customize the ```config.yaml```, ```logging.json``` files
-  * Create a project in google cloud console. In that project, 
-  you will have to:
-    * YAVEREMOS
+  * Linux/Mac users: configure changeMonitor.sh
+  * Windows users: configure changeMonitor.cmd
+  * And we are ready to run
+  
 
 ### Install Python 
 
 [Python](https://www.python.org) version 3 must be installed to 
 make this application work. 
 
-### Create a directory in the target system 
+### Clone the source repository
 
-Just to keep things clean, you will have to create a 
-directory in the target system to keep things clean: 
+Perform a clone of the source repository: 
 
-    $ mkdir changeMonitor
-    $ cd changeMonitor 
+    $ git clone https://github.com/rlunaro/changeMonitor.git
+
+
+### Create a project in google cloud console
+
+TODO
     
 ### OPTIONAL: Create a python environment in the target system
 
@@ -59,20 +63,7 @@ The next step is to install the following packages:
     pip install pyaml
     pip install pathspec
 
-### Download the source code of the application and config files
 
-The following files are needed for complete an installation of 
-```changeMonitor```:
-
-    example.db
-    example_config.yaml
-    example_logging.json
-    changeMonitor.sh  # if your destination system is Linux/Mac
-    changeMonitor.cmd # if your destination system is Windows
-    main.py
-    gmail.py
-
-    
 ## Customize the ```config.yaml```, ```logging.json``` files
 
 ### logging.json
@@ -171,7 +162,7 @@ Under the key ```email``` are place the subject, body remitent and addressee
 of the various emails sents by the application. They are auto-explicative.
 
 
-### Linux/Mac users: changeMonitor.sh
+### Linux/Mac users: configure changeMonitor.sh
 
 You have to configure properly the script ```changeMonitor.sh```. Edit it, and
 perform the following change: 
@@ -185,20 +176,20 @@ to this script by running:
 
    $ chmod u+x changeMonitor.sh
 
-### Windows users: changeMonitor.cmd
+### Windows users: configure changeMonitor.cmd
 
 The same changes done for the linux script have to be made for the windows users
 on this line: 
 
     set change_monitor_home=CONFIGURE HERE 
     
-## And we are ready to run
+### And we are ready to run
 
 Now you can run the application like this: 
 
     $ ./change_monitor.cmd
 
-### Running for the first time
+#### Running for the first time
 
 **The first time** you run the application, it will request for permission 
 to access your google drive and gmail showing a screen like this: 
