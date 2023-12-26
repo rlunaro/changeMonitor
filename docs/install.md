@@ -1,48 +1,79 @@
 
 # Installation procedure
 
-## Python 
+
+
+## Installation
+
+This process of installation are not for the faint of heart. 
+This is a python application with no installation or configuration
+script, you have to do many tasks by yourself. In a nutshell, 
+you have to do the following: 
+
+  * Install Python
+  * Create a directory in the target system
+  * In that target system, create a python environment
+  * Download the source code of the application
+  * Customize the ```config.yaml```, ```logging.json``` files
+  * Create a project in google cloud console. In that project, 
+  you will have to:
+    * YAVEREMOS
+
+### Install Python 
 
 [Python](https://www.python.org) version 3 must be installed to 
 make this application work. 
 
+### Create a directory in the target system 
+
+Just to keep things clean, you will have to create a 
+directory in the target system to keep things clean: 
+
+    $ mkdir changeMonitor
+    $ cd changeMonitor 
+    
+### OPTIONAL: Create a python environment in the target system
+
 Once you have python installed, I recommend to setup a virtual 
 environment to make this changeMonitor working. This will avoid 
 possible conflicts with dependencies from other projects. 
-
-To do so, make sure that virtualenv is installed in your computer
-by running one of the following: 
-
-    $ virtualenv
-    $ python -m venv
     
-One of both above will work. After that, create a virtual environment. 
-For this example we will call it ```changeMonitor```: 
+After that, create a virtual environment. For this example 
+we will call it ```.env```: 
 
-    $ python -m venv changeMonitor
+    $ python -m venv .env
     
 Next step is activate this virtual enviroment, by running the 
 ```activate``` or ```activate.bat``` command. You will see that 
 this is achieved because the prompt will change: 
 
-    $ cd changeMonitor
-    changeMonitor$ source ./bin/activate 
-    (changeMonitor) changeMonitor$ 
+    $ cd .env
+    changeMonitor/.env# source ./bin/activate
+    (.env) changeMonitor/.env# cd ..
+    (.env) changeMonitor# 
+
+The next step is to install the following packages: 
+
+    pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+    pip install oauth2client
+    pip install pyaml
+    pip install pathspec
+
+### Download the source code of the application and config files
+
+The following files are needed for complete an installation of 
+```changeMonitor```:
+
+    example.db
+    example_config.yaml
+    example_logging.json
+    changeMonitor.sh  # if your destination system is Linux/Mac
+    changeMonitor.cmd # if your destination system is Windows
+    main.py
+    gmail.py
+
     
-Now we are ready to install the google libraries for authentication
-and for managing the google api:
-
-    (changeMonitor) changeMonitor$ pip install --upgrade google-api-python-client 
-    (changeMonitor) changeMonitor$ pip install google-auth-oauthlib
-
-## We are ready for deploy the application
-
-[Grab the latest release](https://github.com/rlunaro/google-changeMonitor/releases/)
-of the application and uncompress it:
-
-    (changeMonitor) changeMonitor$ unzip google-changeMonitor_XXXX.zip
-    
-## Config many things
+## Customize the ```config.yaml```, ```logging.json``` files
 
 ### logging.json
 
@@ -51,89 +82,123 @@ will be placed:
 
     "filename" : "changeMonitor.log", 
 
-By default they are left in a file calle ```google-drive.log```, but they 
-can be left wherever you want. In a linux system, a good place is ```/var/log/changeMonitor```.
+Initially you can configure the error level to ```DEBUG```: 
 
+    "level" : "DEBUG"
+
+And when it's working smoothly, you can change back to ```ERROR```.
+  
 BTW, you can configure the maximum size of the logging file and the number 
 of log files to keep. 
 
-### config.json 
+### config.yaml 
 
-Create a ```config.json``` file by renaming the provided example-config.json:
+Create a ```config.yaml``` file by renaming the provided ```example-config.yaml```:
 
-    $ mv example-config.json config.json
+    $ mv example-config.yaml config.yaml
     
-And do the necessary configurations: 
+#### Configure the paths to monitor
 
-    "emailFrom" : "YOUR GOOGLE EMAIL ACCOUNT HERE", 
-    "emailTo" : ["A LIST OF EMAILS TO NOTIFY, CAN BE LEFT EMPTY"], 
+The list of paths to monitor is given under the key ```paths_to_monitor```: 
 
-**runBefore, runAfter**
 
-These are placeholders to run additional commands that must be run 
-before the backup is made and after the backup is made. You 
-can leave them empty if you don't have anything to run:
+    paths_to_monitor : 
+        "/path/to/a/website":
+            # configure here what extensions you want to monitor
+            # (or not to). For instance, to monitor every PHP file
+            # inside /path/to/a/webiste, just add "*.php" (like 
+            # the one set below)
+            # you can also avoid certain files, like the example 
+            # of the README.php file
+            files:
+                - "*.php"
+                - "*.html"
+                - "!README.php"
+            # here you have to configure what directories you want 
+            # to ignore. The directories are checked by regular 
+            # expression, so regular expressions can be used to 
+            # match multiple directories. 
+            # For instance, "images?" would match the directories
+            # "image" or "images" 
+            directories_ignored:
+                - "/images"
 
-  
-    "//2" : "config of directories / files to backup", 
-    "runBefore" : [],
-    "runAfter" : [],
+The directory itself is given as key (```/home/rluna...``` in the example). 
+Under the key ```files``` you can place what kind of files you want to 
+monitor. For instance: 
+
+    files:
+        - "*.php"          # will monitor every php file for changes 
+        - "!README.php"    # but not the README.php file 
+
+Or: 
+
+    files:
+        - "*.*"             # will monitor every file 
+        
+You can create a ```directories_ignored``` entry to identify what directories 
+must be ignored under the specified directory. 
+
+#### Configure database location 
+
+ChangeMonitor keeps a signature of every scanned file in a [sqlite](https://www.google.com) 
+database, so it's very important to have it properly configured. 
+
+The location of the database is specified under the key ```database```: 
+
+    # changeMonitor uses a database to store the files and a 
+    # md5sum of the file; here you have to set where the 
+    # database is located
+    database: "/path/to/your/database/example.db"
     
-Or -let's say- you need to run a script to make a full 
-backup of your database. In that case, you can place 
-something like: 
+It is also given an empty database file called ```example.db```. You should change 
+the name: 
 
-    "//2" : "config of directories / files to backup", 
-    "runBefore" : [ "/root/full-backup-database.sh" ],
-    "runAfter" : [ "/root/clean-last-backup.sh" ],
-
-**resourcesToBackup**
-
-The next step is to properly configure the list of folders
-or files to make backup: 
-
-    "resourcesToBackup" : [ "/my_very_important_dir" ],
-
-__windows users__ bear in mind you will have to use backslashes
-and double backslash: 
-
-    "resourcesToBackup" : [ "c:\\my_very_important_dir" ],
+    # mv example.db changeMonitor.db 
     
-**verifyUploadedFiles**
+And configure it accordingly in the database key of the config file. 
 
-__I recommend set this to "true"__: it will make an MD5 sum of the 
-remote and local files and check that they match. 
 
-**dailyPolicyFolder, monthlyPolicyFolder, yearlyPolicyFolder**
+#### Configuration of the installed key
 
-How the folders for daily, monthly and yearly copies be called. 
-You can leave them as is. 
+Under the ```installed``` must go an app registration information taken form 
+google cloud console. 
 
-### drive_backup.sh
 
-You have to configure properly the script ```drive_backup.sh```. Edit it, and
+#### Email configuration
+
+Under the key ```email``` are place the subject, body remitent and addressee
+of the various emails sents by the application. They are auto-explicative.
+
+
+### Linux/Mac users: changeMonitor.sh
+
+You have to configure properly the script ```changeMonitor.sh```. Edit it, and
 perform the following change: 
 
-    drive_backup_home="PUT-HERE-THE-HOME-OF-YOUR-APPLICATION"
+    change_monitor_home="PUT-HERE-THE-HOME-OF-YOUR-APPLICATION"
 
 This is the directory where you have created the virtual environment. 
 
-**VERY IMPORTANT:** give execution permissions to this script by running: 
+**VERY IMPORTANT FOR LINUX/MAC USERS:** give execution permissions 
+to this script by running: 
 
-   $ chmod u+x drive_backup.sh
+   $ chmod u+x changeMonitor.sh
 
-### drive_backup.cmd
+### Windows users: changeMonitor.cmd
 
 The same changes done for the linux script have to be made for the windows users
 on this line: 
 
-    set drive_backup_home=CONFIGURE HERE 
+    set change_monitor_home=CONFIGURE HERE 
     
 ## And we are ready to run
 
 Now you can run the application like this: 
 
-    $ ./drive_backup.sh
+    $ ./change_monitor.cmd
+
+### Running for the first time
 
 **The first time** you run the application, it will request for permission 
 to access your google drive and gmail showing a screen like this: 

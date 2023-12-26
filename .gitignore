@@ -1,6 +1,7 @@
 
 # project-specific
 PRIVATE/
+private/
 changeMonitor.db
 config.yaml
 logging.json

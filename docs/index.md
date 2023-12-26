@@ -26,18 +26,3 @@ any file change in a directory of your interest and
 sends an email every night (or with the periodicity you
 want). 
 
-## Installation
-
-The following files are needed for complete an installation of 
-```changeMonitor```: 
-
-    example.db
-    example_config.yaml
-
-## Creation of the environment file 
-
-
-    pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
-    pip install oauth2client
-    pip install pyaml
-    pip install pathspec
